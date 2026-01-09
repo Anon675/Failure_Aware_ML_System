@@ -1,0 +1,14 @@
+{
+  "domain": "string",
+  "input": "string",
+  "prediction": "string",
+  "confidence": "number",
+  "failures": ["string"],
+  "explanations": ["string"],
+  "decision": "string",
+  "timestamp": "string",
+  "human_verdict": {
+    "status": "pending | approved | corrected | rejected",
+    "comments": "string"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "domain": "ocr",
+  "input": "sample_input/sample_image.png",
+  "predictions": [
+    "A love tested by distance,\ngrief, and fate\u2014\nyet still alive.\n\nThis is onl\n\nWE FOUND\nEACH OTHER\n\nit nd Again\n\nAMAN\nBHARADWAJ\n",
+    "A love tested by distance,\ngrief, and fate\u2014\nyet still alive.\n\nThis is onl\n\nWE FOUND\nEACH OTHER\n\nit nd Again\n\nAMAN\nBHARADWAJ\n",
+    "A love tested by distance,\ngrief, and fate\u2014\nyet still alive.\n\nThis is onl\n\nWE FOUND\nEACH OTHER\n\nit nd Again\n\nAMAN\nBHARADWAJ\n"
+  ],
+  "mean_confidence": 1.0,
+  "confidence_variance": 0.0,
+  "failures": [
+    "signal_failed:contains_non_ascii"
+  ],
+  "explanations": [
+    "One or more domain safety checks failed."
+  ],
+  "timestamp": "2025-12-27T12:45:03.705337",
+  "human_verdict": {
+    "status": "pending",
+    "comments": ""
+  }
+}

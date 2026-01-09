@@ -1,0 +1,16 @@
+system:
+  name: failure_aware_ml_system
+  environment: development
+
+logging:
+  level: INFO
+  format: json
+  save_to_file: true
+
+human_review:
+  enabled: true
+  max_queue_size: 1000
+
+retry:
+  enabled: true
+  max_retries: 1

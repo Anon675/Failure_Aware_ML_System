@@ -1,0 +1,22 @@
+{
+  "domain": "medical",
+  "input": "sample_input/xray.png",
+  "predictions": [
+    "no_fracture",
+    "fracture",
+    "fracture"
+  ],
+  "mean_confidence": 0.7745829201137896,
+  "confidence_variance": 0.009281321623391592,
+  "failures": [
+    "prediction_disagreement"
+  ],
+  "explanations": [
+    "Unknown failure detected."
+  ],
+  "timestamp": "2025-12-27T12:44:46.136586",
+  "human_verdict": {
+    "status": "pending",
+    "comments": ""
+  }
+}

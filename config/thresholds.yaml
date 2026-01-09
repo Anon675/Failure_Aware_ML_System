@@ -1,0 +1,16 @@
+global:
+  min_confidence: 0.60
+  max_entropy: 1.5
+
+ocr:
+  min_confidence: 0.70
+  min_text_length: 5
+  max_blank_ratio: 0.30
+
+medical:
+  min_confidence: 0.80
+  min_image_quality: 0.50
+
+video:
+  min_confidence: 0.65
+  min_frames_analyzed: 8

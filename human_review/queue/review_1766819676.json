@@ -1,0 +1,22 @@
+{
+  "domain": "video",
+  "input": "sample_input/videos/short.mp4",
+  "predictions": [
+    "question_detected",
+    "question_detected",
+    "question_detected"
+  ],
+  "mean_confidence": 0.755026434971485,
+  "confidence_variance": 0.021867954663229366,
+  "failures": [
+    "unstable_confidence"
+  ],
+  "explanations": [
+    "Unknown failure detected."
+  ],
+  "timestamp": "2025-12-27T12:44:36.729143",
+  "human_verdict": {
+    "status": "pending",
+    "comments": ""
+  }
+}

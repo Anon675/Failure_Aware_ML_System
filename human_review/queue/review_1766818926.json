@@ -1,0 +1,17 @@
+{
+  "domain": "ocr",
+  "input": "sample_input/sample_image.png",
+  "prediction": "A love tested by distance,\ngrief, and fate\u2014\nyet still alive.\n\nThis is onl\n\nWE FOUND\nEACH OTHER\n\nit nd Again\n\nAMAN\nBHARADWAJ\n",
+  "confidence": 1.0,
+  "failures": [
+    "signal_failed:contains_non_ascii"
+  ],
+  "explanations": [
+    "One or more domain safety checks failed."
+  ],
+  "timestamp": "2025-12-27T12:32:06.475537",
+  "human_verdict": {
+    "status": "pending",
+    "comments": ""
+  }
+}

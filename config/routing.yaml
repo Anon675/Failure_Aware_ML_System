@@ -1,0 +1,22 @@
+routing_rules:
+  - condition: confidence_low
+    action: human_review
+
+  - condition: signal_failure
+    action: human_review
+
+  - condition: retry_allowed
+    action: retry
+
+  - condition: safe
+    action: auto_accept
+
+actions:
+  auto_accept:
+    description: Accept prediction automatically
+
+  retry:
+    description: Retry inference once
+
+  human_review:
+    description: Send case to human review queue
