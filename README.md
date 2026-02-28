@@ -241,7 +241,9 @@ Swagger UI available at:
 
 http://127.0.0.1:8000/docs
 
-10. Running The System
+---
+
+## 10. Running The System
 
 Start API:
 
@@ -254,7 +256,9 @@ Start UI:
 
 streamlit run ui/streamlit_app.py
 
-11. Design Principles
+---
+
+## 11. Design Principles
 
 This project intentionally emphasizes:
 
@@ -276,7 +280,9 @@ Ultra-low latency
 
 Fine-tuned probabilistic calibration
 
-12. Limitations
+---
+
+## 12. Limitations
 
 Confidence model is heuristic-based
 
@@ -286,7 +292,9 @@ No distributed scaling layer
 
 No containerization (future work)
 
-13. Future Work
+---
+
+## 13. Future Work
 
 Risk-based uncertainty scoring
 
@@ -300,7 +308,9 @@ Docker + container orchestration
 
 Observability layer (metrics + logging dashboards)
 
-14. Positioning
+---
+
+## 14. Positioning
 
 This project demonstrates:
 
@@ -322,16 +332,5 @@ MLOps Foundations
 
 Reliable Generative AI Infrastructure
 
-
----
-
-This version is:
-
-- Clean
-- Technical
-- Non-flashy
-- Mature
-- Honest about limitations
-- Strong for interviews
 
 ---
