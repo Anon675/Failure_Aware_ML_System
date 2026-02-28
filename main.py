@@ -1,129 +1,167 @@
 import argparse
+import yaml
+import os
 
 # Core
-from core.inference_engine import InferenceEngine
-from core.uncertainty_engine import UncertaintyEngine
 from core.stability_engine import StabilityEngine
-from core.fusion_engine import FusionEngine
 from core.failure_detector import FailureDetector
 from core.failure_reasoner import FailureReasoner
 from core.router import Router
 from core.logger import SystemLogger
 
-# OCR
-from domains.ocr.model import OCRModel
-from domains.ocr.preprocess import preprocess as ocr_preprocess
-from domains.ocr.postprocess import postprocess as ocr_postprocess
-from domains.ocr.signals import extract_signals as ocr_signals
+# GenAI
+from domains.genai.llm_model import LLMModel
+from domains.genai.preprocess import preprocess
+from domains.genai.signals import extract_signals
+from domains.genai.embedding_model import EmbeddingModel
+from domains.genai.retriever import Retriever
+from domains.genai.grounding import check_grounding
+from domains.genai.self_critique import SelfCritique
 
-# Medical
-from domains.medical.model import MedicalModel
-from domains.medical.preprocess import preprocess as medical_preprocess
-from domains.medical.postprocess import postprocess as medical_postprocess
-from domains.medical.signals import extract_signals as medical_signals
+# Ingestion
+from ingestion.pdf_loader import load_pdf
+from ingestion.image_loader import load_image_text
+from ingestion.text_splitter import split_text
 
-# Video
-from domains.video.model import VideoModel
-from domains.video.preprocess import preprocess as video_preprocess
-from domains.video.postprocess import postprocess as video_postprocess
-from domains.video.signals import extract_signals as video_signals
+
+def load_yaml(path):
+    with open(path, "r") as f:
+        return yaml.safe_load(f)
 
 
 def main():
-    parser = argparse.ArgumentParser("Failure-Aware ML System v2.0")
-    parser.add_argument("--domain", required=True, choices=["ocr", "medical", "video"])
-    parser.add_argument("--input", required=True)
+    parser = argparse.ArgumentParser("Failure-Aware Document Assistant v3.5")
+    parser.add_argument("--input", required=True, help="Question")
+    parser.add_argument("--doc", required=False, help="Optional document path")
     args = parser.parse_args()
 
-    # Engines
-    inference_engine = InferenceEngine()
-    uncertainty_engine = UncertaintyEngine()
+    config = load_yaml("config/genai_rag.yaml")["genai_rag"]
+
     stability_engine = StabilityEngine()
-    fusion_engine = FusionEngine()
     failure_detector = FailureDetector()
     failure_reasoner = FailureReasoner()
     router = Router()
     logger = SystemLogger()
 
-    predictions = []
-    confidences = []
+    embedding_model = EmbeddingModel()
+    model = LLMModel(config["model_name"])
+    critique_engine = SelfCritique()
 
-    # -------- DOMAIN SWITCH -------- #
+    query = preprocess(args.input)
 
-    if args.domain == "ocr":
-        model = OCRModel()
-        processed = ocr_preprocess(args.input)
+    # -------- Document Ingestion --------
+    documents = []
 
-        for _ in range(3):
-            result = inference_engine.run(model, processed)
-            predictions.append(result["prediction"])
-            confidences.append(result["confidence"])
+    if args.doc:
+        ext = os.path.splitext(args.doc)[1].lower()
 
-        signals = ocr_signals(predictions[0])
-        final_output = ocr_postprocess(predictions[0])
+        if ext == ".pdf":
+            raw_text = load_pdf(args.doc)
+        elif ext in [".png", ".jpg", ".jpeg"]:
+            raw_text = load_image_text(args.doc)
+        else:
+            print("Unsupported file type.")
+            return
 
-    elif args.domain == "medical":
-        model = MedicalModel()
-        processed = medical_preprocess(args.input)
+        documents = split_text(raw_text)
 
-        for _ in range(3):
-            result = inference_engine.run(model, processed)
-            predictions.append(result["prediction"])
-            confidences.append(result["confidence"])
+    # If no doc provided → general assistant mode
+    if not documents:
+        documents = [""]  # dummy
 
-        signals = medical_signals(image_quality=0.7)
-        final_output = medical_postprocess(predictions[0])
+    retriever = Retriever(embedding_model, documents)
+    retrieved_docs = retriever.retrieve(query, config["top_k"])
 
-    elif args.domain == "video":
-        model = VideoModel()
-        frames = video_preprocess(args.input)
+    context_block = "\n\n".join(retrieved_docs)
 
-        for _ in range(3):
-            result = inference_engine.run(model, frames)
-            predictions.append(result["prediction"])
-            confidences.append(result["confidence"])
+    max_retries = 2
+    attempt = 0
 
-        signals = video_signals(frames)
-        final_output = video_postprocess(predictions[0])
+    while attempt <= max_retries:
 
-    # -------- v2.0 LOGIC -------- #
+        prompt = f"""
+You are a document-aware assistant.
 
-    uncertainty = uncertainty_engine.evaluate(confidences)
-    stable = stability_engine.is_stable(predictions)
+If document context is relevant, use it.
+Otherwise answer normally.
 
-    fusion_failures = fusion_engine.fuse(uncertainty, stable)
+Context:
+{context_block}
 
-    base_failures = failure_detector.detect(
-        inference_result={"error": None},
-        confidence_result={"is_low": uncertainty["mean_confidence"] < 0.6},
-        domain_signals=signals
-    )
+Question:
+{query}
 
-    failures = base_failures + fusion_failures
+Answer clearly:
+"""
+
+        predictions = []
+
+        for _ in range(config["num_generations"]):
+            text = model.generate(prompt, config["temperature"])
+            predictions.append(text)
+
+        final_prediction = predictions[0]
+        stable = stability_engine.is_stable(predictions)
+
+        grounding_result = check_grounding(
+            final_prediction,
+            retrieved_docs,
+            embedding_model
+        )
+
+        critique_result = critique_engine.evaluate(
+            model,
+            query,
+            final_prediction,
+            context_block
+        )
+
+        confidence_score = (
+            0.3 * grounding_result["similarity"] +
+            0.4 * (1.0 if stable else 0.0) +
+            0.3 * (1.0 if critique_result["is_safe"] else 0.0)
+        )
+
+        base_failures = failure_detector.detect(
+            inference_result={"error": None},
+            confidence_result={"is_low": confidence_score < 0.45},
+            domain_signals=extract_signals(final_prediction)
+        )
+
+        failures = base_failures
+
+        if not critique_result["is_safe"]:
+            failures.append("self_critique_failed")
+
+        if not failures:
+            break
+
+        attempt += 1
+
     explanations = failure_reasoner.explain(failures)
 
     log_record = {
-        "domain": args.domain,
-        "input": args.input,
-        "predictions": predictions,
-        "mean_confidence": uncertainty["mean_confidence"],
-        "confidence_variance": uncertainty["variance"],
+        "domain": "document_genai_v3.5",
+        "input": query,
+        "document_used": bool(args.doc),
+        "confidence_score": confidence_score,
+        "grounding_similarity": grounding_result["similarity"],
+        "stable": stable,
+        "attempts": attempt,
         "failures": failures,
         "explanations": explanations
     }
 
     decision = router.route(failures, log_record)
     log_record["decision"] = decision
-    log_record["final_output"] = final_output
 
     logger.log(log_record)
 
-    print("\n--- RESULT (v2.0) ---")
-    print("Domain:", args.domain)
+    print("\n--- RESULT (Document-Aware GenAI v3.5) ---")
     print("Decision:", decision)
-    print("Mean Confidence:", uncertainty["mean_confidence"])
-    print("Variance:", uncertainty["variance"])
+    print("Confidence Score:", round(confidence_score, 3))
     print("Failures:", failures)
+    print("\nAnswer:\n", final_prediction)
 
 
 if __name__ == "__main__":

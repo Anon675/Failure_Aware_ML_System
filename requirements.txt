@@ -7,3 +7,4 @@ pytesseract
 pyyaml
 scikit-learn
 tqdm
+requests

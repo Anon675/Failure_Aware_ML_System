@@ -1,0 +1,26 @@
+{
+  "domain": "genai_rag_v3.2",
+  "input": "What is a qubit?",
+  "retrieved_docs": [
+    "Qubits can exist in superposition.",
+    "Quantum computing uses qubits instead of classical bits.",
+    "Entanglement allows correlated quantum states."
+  ],
+  "final_prediction": "Based on the provided context, I can confidently answer that:\n\nA qubit is a unit of information in quantum computing that can exist in a superposition.",
+  "mean_confidence": 0.24733333333333332,
+  "confidence_variance": 0.0015608888888888886,
+  "grounding_similarity": 0.725274920463562,
+  "critique_result": "SAFE",
+  "attempts": 3,
+  "failures": [
+    "low_confidence"
+  ],
+  "explanations": [
+    "Model confidence is below safe threshold."
+  ],
+  "timestamp": "2026-02-18T11:17:55.865019",
+  "human_verdict": {
+    "status": "pending",
+    "comments": ""
+  }
+}

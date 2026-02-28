@@ -1,0 +1,5 @@
+genai:
+  model_name: llama3
+  num_generations: 3
+  temperature: 0.7
+  instability_variance_threshold: 0.02

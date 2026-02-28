@@ -1,7 +1,23 @@
+from sentence_transformers import SentenceTransformer
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
+
 class StabilityEngine:
     """
-    Checks if predictions are consistent across runs.
+    Checks semantic stability of generated outputs.
     """
 
-    def is_stable(self, predictions):
-        return len(set(predictions)) == 1
+    def __init__(self):
+        self.model = SentenceTransformer("all-MiniLM-L6-v2")
+
+    def is_stable(self, predictions, threshold=0.85):
+        if len(predictions) < 2:
+            return True
+
+        embeddings = self.model.encode(predictions)
+        similarity_matrix = cosine_similarity(embeddings)
+
+        # Ignore diagonal
+        similarities = similarity_matrix[np.triu_indices(len(predictions), k=1)]
+
+        return all(sim >= threshold for sim in similarities)

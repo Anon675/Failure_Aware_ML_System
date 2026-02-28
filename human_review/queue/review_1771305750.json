@@ -1,0 +1,22 @@
+{
+  "domain": "genai",
+  "input": "Explain quantum computing simply.",
+  "predictions": [
+    "Here's a simple explanation of quantum computing:\n\n**Classical Computing:**\n\nIn classical computing, information is stored as bits (0s and 1s) that can be either 0 or 1 at any given time. These bits are processed using logical gates (AND, OR, NOT, etc.) to perform calculations.\n\n**Quantum Computing:**\n\nIn quantum computing, information is stored as qubits (quantum bits). Qubits are different from classical bits because they can exist in multiple states simultaneously, known as superposition. This means a qubit can be both 0 and 1 at the same time!\n\nWhen you perform an operation on a qubit, it's like flipping a coin. Heads or tails? The qubit becomes either 0 or 1, but also retains some \"memory\" of its original superposition state.\n\n**Key benefits:**\n\n1. **Faster processing:** Quantum computers can process certain calculations exponentially faster than classical computers.\n2. **Simulation complexity:** Quantum computers can simulate complex systems that are difficult to model classically.\n3. **Cryptography breakthroughs:** Quantum computing enables new forms of secure cryptography and coding.\n\nIn summary, quantum computing is a revolutionary technology that leverages the strange properties of qubits to solve complex problems faster and more efficiently than classical computers.",
+    "Here's a simple explanation of quantum computing:\n\n**Classical Computing:** Traditional computers use \"bits\" to store information, which can be either 0 or 1. This is like having a light switch that's either ON or OFF.\n\n**Quantum Computing:** Quantum computers use \"qubits\" (quantum bits), which can exist in multiple states simultaneously, like being both ON and OFF at the same time. This is like having a light switch that can be both ON and OFF, AND ANY INTERMEDIATE STATE IN BETWEEN!\n\nThis property allows quantum computers to process vast amounts of data much faster than classical computers by exploring all possible solutions simultaneously. It's like trying every combination of a lock in one go, rather than trying each one individually.\n\nIn simple terms, quantum computing is like having a super-powerful calculator that can try ALL the answers at once, making it exponentially faster and more powerful than traditional computers for certain types of complex problems!",
+    "Here's a simple explanation of quantum computing:\n\n**Classic Computing**: In classical computers, information is stored as bits (0s or 1s). These bits can be in one of two states: on or off. This binary system allows for processing and storing data using logical operations like AND, OR, and NOT.\n\n**Quantum Computing**: Quantum computers use \"qubits\" instead of bits. Qubits are special kinds of particles that can exist in multiple states simultaneously, known as superposition. This means a qubit can represent both 0 and 1 at the same time! \n\nWhen processing information, quantum computers use another property called entanglement, where multiple qubits become connected. This allows for an exponential increase in processing power compared to classic computers.\n\n**Key Points**:\n\n* Qubits can exist in multiple states (superposition)\n* Quantum computers process information using entangled qubits\n* Quantum computing enables exponentially faster calculations than classical computers\n\nIn simple terms, quantum computing is like having a superpower that allows you to explore multiple possibilities simultaneously, making it incredibly powerful for complex calculations and simulations."
+  ],
+  "mean_confidence": 1.0,
+  "confidence_variance": 0.0,
+  "failures": [
+    "prediction_disagreement"
+  ],
+  "explanations": [
+    "Unknown failure detected."
+  ],
+  "timestamp": "2026-02-17T10:52:30.751119",
+  "human_verdict": {
+    "status": "pending",
+    "comments": ""
+  }
+}
