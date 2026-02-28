@@ -1,232 +1,117 @@
-You can paste this directly into your repository.
-
-# Failure-Aware Generative AI System
-
-## 1. Problem Statement
-
-Modern generative AI systems frequently produce outputs that appear fluent but may be:
-
-- Ungrounded
-- Hallucinated
-- Internally inconsistent
-- Overconfident
-
-This project implements a **failure-aware generative inference system** designed to:
-
-1. Detect unreliable model outputs  
-2. Quantify uncertainty via structured signals  
-3. Route high-risk responses to human review  
-4. Support document-based and general question answering  
-
-The system prioritizes **controlled deployment of generative models**, not unrestricted chatbot behavior.
-
----
-
-## 2. System Capabilities
-
-- Local LLM inference (Ollama-based)
-- Retrieval-Augmented Generation (RAG)
-- PDF ingestion
-- OCR ingestion (images)
-- Embedding-based semantic grounding validation
-- Multi-generation stability detection
-- Self-critique evaluation
-- Composite confidence scoring
-- Failure reason logging
-- Human review routing
-- FastAPI production backend
-- Streamlit thin client interface
-
----
-
-## 3. High-Level Architecture
+🧠 Failure-Aware Generative AI System
 
 
+
+
+
+📌 Overview
+
+This project implements a Failure-Aware Generative AI Inference System designed to:
+
+Detect unreliable LLM outputs
+
+Quantify uncertainty using structured signals
+
+Route high-risk responses to human review
+
+Support document-based and general question answering
+
+Unlike traditional chatbots, this system prioritizes:
+
+Reliability over fluency
+Controlled generation over blind response
+
+🚀 Key Features
+🔍 Hybrid Generation Engine
+
+Local LLM inference via Ollama
+
+Retrieval-Augmented Generation (RAG)
+
+General fallback mode
+
+🧪 Uncertainty Modeling
+
+Multi-generation stability detection
+
+Embedding-based semantic grounding validation
+
+Self-critique verification
+
+Composite confidence scoring
+
+📄 Document Intelligence
+
+PDF ingestion
+
+OCR support (images)
+
+Chunked embedding retrieval
+
+Context-aware answering
+
+🏗 Production Architecture
+
+FastAPI backend
+
+Pydantic schemas
+
+Modular service layer
+
+Swagger API documentation
+
+Streamlit thin client
+
+🏛 System Architecture
 User Query
-↓
-FastAPI Service Layer
-↓
-Inference Service
-↓
-LLM Generation (Multiple Runs)
-↓
+    ↓
+FastAPI Service
+    ↓
+Inference Engine
+    ↓
+LLM (Multiple Generations)
+    ↓
 Uncertainty Layer
-• Stability Analysis
-• Grounding Similarity
-• Self-Critique Validation
-↓
-Composite Confidence Score
-↓
-Failure Detector
-↓
-Router
-• Auto Accept
-• Human Review
-
-
----
-
-## 4. Project Structure
-
-
-core/
-stability_engine.py
-failure_detector.py
-failure_reasoner.py
-router.py
-logger.py
-
-domains/genai/
-llm_model.py
-embedding_model.py
-retriever.py
-grounding.py
-self_critique.py
-prompt_builder.py
-
-ingestion/
-pdf_loader.py
-image_loader.py
-text_splitter.py
-
-api/
-main.py
-routers/
-services/
-schemas/
-
-ui/
-streamlit_app.py
-
-config/
-genai_rag.yaml
-
-human_review/
-queue/
-
-
----
-
-## 5. Uncertainty Modeling Strategy
-
-This system does not rely on token-level probabilities (which are not always available from local LLMs).
-
-Instead, it computes uncertainty via structured signals:
-
-### 5.1 Multi-Generation Stability
-
-The same prompt is generated multiple times.
-
-If outputs diverge significantly:
-- Stability = False
-- Confidence decreases
-
-### 5.2 Semantic Grounding Similarity
-
-Cosine similarity between:
-- Generated answer embedding
-- Retrieved document embeddings
-
-Low similarity → weak grounding signal.
-
-### 5.3 Self-Critique Evaluation
-
-The model is prompted to evaluate its own response.
-
-If the critique returns `UNSAFE`, the output is flagged.
-
----
-
-## 6. Composite Confidence
+    • Stability
+    • Grounding Similarity
+    • Self-Critique
+    ↓
+Composite Confidence
+    ↓
+Failure Detection
+    ↓
+Router (Auto Accept / Human Review)
+📂 Project Structure
+core/               # Failure detection engines
+domains/genai/      # LLM, embeddings, retrieval, grounding
+ingestion/          # PDF + OCR loaders
+api/                # FastAPI backend
+ui/                 # Streamlit client
+config/             # YAML configuration
+human_review/       # Escalation queue
+📊 Confidence Model
 
 Confidence is computed as:
 
-
 Confidence =
-0.3 × Grounding Similarity
-
-0.4 × Stability
-
-0.3 × Self-Critique Pass
-
+    0.3 × Grounding Similarity
+  + 0.4 × Stability
+  + 0.3 × Self-Critique Pass
 
 Routing threshold:
 
-
 if Confidence < 0.45 → potential escalation
 
+Note: This is a structured heuristic model, not calibrated probabilistic confidence.
 
-Note:
-This is a heuristic composite model, not calibrated probabilistic confidence.
-
----
-
-## 7. Routing Logic
-
-Outputs are routed based on:
-
-- Low confidence
-- Explicit critique failure
-- Structured failure signals
-
-Possible decisions:
-
-- `auto_accept`
-- `human_review`
-
-Human review records are stored in:
-
-
-human_review/queue/
-
-
----
-
-## 8. Document Ingestion Pipeline
-
-Supported formats:
-
-- PDF
-- PNG / JPG (OCR)
-
-Pipeline:
-
-
-Document
-↓
-Text Extraction
-↓
-Chunking
-↓
-Embedding
-↓
-Vector Retrieval
-↓
-RAG Context Injection
-
-
-If no document is provided, system operates in hybrid general mode.
-
----
-
-## 9. API Layer
-
-FastAPI exposes:
-
-
+🌐 API Layer
 POST /ask
-
-
-Request:
-
-```json
+Request
 {
   "question": "What is a qubit?",
   "document_path": null
 }
-
-Response:
-
+Response
 {
   "answer": "...",
   "confidence_score": 0.92,
@@ -236,101 +121,46 @@ Response:
   "decision": "auto_accept"
 }
 
-Swagger UI available at:
-
+Swagger UI:
 
 http://127.0.0.1:8000/docs
-
----
-
-## 10. Running The System
-
-Start API:
-
-
+🖥 Running The System
+1️⃣ Start API
 uvicorn api.main:app --reload
-
-
-Start UI:
-
-
+2️⃣ Start UI
 streamlit run ui/streamlit_app.py
+🧠 Design Principles
 
----
+Separation of concerns (Core / Service / API / UI)
 
-## 11. Design Principles
-
-This project intentionally emphasizes:
-
-Failure detection over blind generation
-
-Explicit uncertainty modeling
-
-Service-layer separation
+Failure-awareness over blind generation
 
 Modular architecture
 
-Deployment readiness
+Production-style inference service
 
-It is not optimized for:
+Explicit uncertainty modeling
 
-Maximum generation creativity
-
-Ultra-low latency
-
-Fine-tuned probabilistic calibration
-
----
-
-## 12. Limitations
+⚠ Limitations
 
 Confidence model is heuristic-based
 
-No formal entropy-based uncertainty yet
+No entropy-based uncertainty yet
 
-No distributed scaling layer
+No distributed scaling
 
-No containerization (future work)
+No containerization (planned)
 
----
-
-## 13. Future Work
+🔮 Future Work
 
 Risk-based uncertainty scoring
 
-Entropy-based generation disagreement metrics
-
-Model versioning
+Entropy-based disagreement modeling
 
 CI/CD pipeline
 
-Docker + container orchestration
+Docker containerization
 
-Observability layer (metrics + logging dashboards)
+Observability metrics layer
 
----
-
-## 14. Positioning
-
-This project demonstrates:
-
-Applied ML system architecture
-
-Generative AI orchestration
-
-Uncertainty-aware deployment logic
-
-Backend service engineering
-
-Failure-aware routing strategy
-
-It is intended as a bridge between:
-
-Applied ML Engineering
-
-MLOps Foundations
-
-Reliable Generative AI Infrastructure
-
-
----
+Cloud deployment
