@@ -1,60 +1,170 @@
-# Failure-Aware ML System (Cross-Domain)
+🧠 Failure-Aware Generative AI System
+Overview
 
-## What is this project?
+This project implements a failure-aware generative AI inference system designed to detect unreliable model outputs, compute structured uncertainty signals, and route high-risk responses for human review.
 
-This project is a **Failure-Aware Machine Learning System**.
+Unlike standard RAG chatbots, this system integrates:
 
-Instead of blindly trusting ML predictions, this system:
+Semantic grounding validation
 
-- Checks **how reliable** a prediction is
-- Detects **when a model might be wrong**
-- Explains **why the prediction failed**
-- Sends risky cases to **human review**
-- Logs everything in a clean, structured way
+Multi-generation stability analysis
 
-This is how real-world ML systems work in industry.
+Self-critique verification
 
----
+Composite confidence scoring
 
-## Domains Covered
+Human escalation routing
 
-The same system is applied to **three different domains**:
+Document ingestion (PDF + OCR)
 
-1. **OCR (Text from images / documents)**
-2. **Medical Imaging (X-ray fracture detection)**
-3. **Video Understanding (frame + vision-language models)**
+FastAPI production backend
 
-Each domain plugs into the same core pipeline.
+Streamlit thin client interface
 
----
+The system is designed with production-style modular architecture and service separation.
 
-## Why this project matters
+Core Objectives
 
-Most ML demos only show:
-> “Model gives output”
+Detect when generative model outputs are unreliable
 
-Real companies care about:
-- Wrong predictions
-- Low confidence
-- Edge cases
-- Human intervention
-- Audit trails
+Prevent hallucination-driven auto-accept decisions
 
-This project focuses on **trust, reliability, and failure handling**.
+Provide structured failure reasoning
 
----
+Support document-based and general Q&A
 
-## Project Structure (High Level)
+Expose inference through production-ready API
 
-- `core/` → common logic for confidence, failure detection, routing
-- `domains/` → OCR, Medical, Video implementations
-- `config/` → thresholds, routing rules
-- `human_review/` → files sent for manual checking
-- `logs/` → structured logs (auto-generated)
+Architecture
+User Query
+    ↓
+FastAPI Service Layer
+    ↓
+Inference Service
+    ↓
+LLM Generation (Ollama)
+    ↓
+Uncertainty Components:
+    • Multi-generation stability
+    • Semantic grounding similarity
+    • Self-critique validation
+    ↓
+Composite Confidence Score
+    ↓
+Failure Detection
+    ↓
+Router (Auto-Accept / Human Review)
+Key Technical Components
+1. Hybrid Generative Engine
 
----
+Local LLM via Ollama
 
-## How to run (later)
+Retrieval-Augmented Generation (RAG)
 
-```bash
-python main.py
+General fallback mode
+
+2. Failure-Aware Layer
+
+Stability detection across multiple generations
+
+Embedding-based grounding validation (cosine similarity)
+
+Self-critique prompt evaluation
+
+Composite confidence scoring
+
+Structured failure reasoning
+
+3. Document Ingestion
+
+PDF parsing (pypdf)
+
+OCR support (Tesseract)
+
+Chunked embedding-based retrieval
+
+4. Production Backend
+
+FastAPI inference service
+
+Pydantic request/response schemas
+
+Modular service layer separation
+
+Swagger documentation
+
+5. UI Layer
+
+Streamlit thin client
+
+File upload support
+
+Confidence and failure visualization
+
+Decision display (Auto / Human Review)
+
+Project Structure
+core/               # Failure detection engines
+domains/genai/      # LLM, embeddings, retrieval, grounding
+ingestion/          # PDF + OCR loaders
+api/                # FastAPI backend
+ui/                 # Streamlit client
+config/             # YAML configuration
+human_review/       # Escalation queue
+Running The System
+Start API
+uvicorn api.main:app --reload
+Start UI
+streamlit run ui/streamlit_app.py
+
+Open:
+
+http://127.0.0.1:8000/docs
+Confidence Model
+
+Confidence is derived from:
+
+Confidence =
+    0.3 × Grounding Similarity
+  + 0.4 × Generation Stability
+  + 0.3 × Self-Critique Pass
+
+Routing decisions are based on structured failure signals rather than blind model output.
+
+Example Use Cases
+
+Document Q&A with hallucination mitigation
+
+AI system requiring escalation on uncertainty
+
+Prototype for risk-aware AI infrastructure
+
+Research-oriented uncertainty modeling
+
+Future Work (Planned v4)
+
+Explicit uncertainty entropy modeling
+
+Risk-based routing instead of composite scoring
+
+Model versioning integration
+
+Containerization + CI/CD
+
+Observability metrics layer
+
+Cloud deployment
+
+Positioning
+
+This project demonstrates:
+
+Applied ML system design
+
+Generative AI orchestration
+
+Failure detection logic
+
+Backend service architecture
+
+Deployment-ready ML pipeline structure
